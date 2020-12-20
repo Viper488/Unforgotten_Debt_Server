@@ -40,6 +40,11 @@ public class UserServiceImpl implements UserService {
         return meetingDetailsDto;
     }
     @Override
+    public MeetingDetailsDto getMeetingDetailsCode(String code) {
+        loadCodeMeting(code);
+        return meetingDetailsDto;
+    }
+    @Override
     public boolean logIn(LoginDto loginDto) {
         userDto = userRepository.findUser(loginDto.getEmail(), loginDto.getPassword());
         return userDto != null;
@@ -82,6 +87,45 @@ public class UserServiceImpl implements UserService {
         }
         System.out.println("Insert Person done successfully");
         userRepository.initUsers();
+        return true;
+    }
+
+    @Override
+    public boolean joinThruCode(String code){
+        boolean meetingExist = false;
+        MeetingDto meetingDto = null;
+        for (MeetingDto meeting:userRepository.getMeetings().getMeetingDtoList()
+             ) {
+            if(meeting.getCode().equals(code)){
+                meetingDto = meeting;
+                meetingExist = true;
+            }
+        }
+        if (!meetingExist){
+            return false;
+        }
+        Connection c = null;
+        Statement stmt  = null;
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://195.150.230.210:5434/2020_hamernik_artur",
+                            "2020_hamernik_artur", "31996");
+            c.setAutoCommit(false);
+
+            stmt = c.createStatement();
+            stmt.executeUpdate(
+                    "INSERT INTO debt.meeting_person VALUES("+ meetingDto.getId_meeting() +","+ userDto.getId_person() +",'member');");
+            stmt.close();
+            c.commit();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+            System.out.println("Insert person into meeting failed");
+            return false;
+        }
+        System.out.println("Insert person into meeting done successfully");
         return true;
     }
 
@@ -157,5 +201,51 @@ public class UserServiceImpl implements UserService {
         }
         meetingDetailsDto = new MeetingDetailsDto(meId,nameMe,code,personMeetingDtos);
         System.out.println("Users from meeting " + id_meeting +" downloaded successfully");
+    }
+
+    private void loadCodeMeting(String code){
+        List<PersonMeetingDto> personMeetingDtos = new ArrayList<>();
+        Integer meId = null;
+        String nameMe = null;
+        String codeMe = null;
+        Connection c = null;
+        Statement stmt  = null;
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://195.150.230.210:5434/2020_hamernik_artur",
+                            "2020_hamernik_artur", "31996");
+            c.setAutoCommit(false);
+
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery( "SELECT meeting.id_meeting,meeting.name AS \"meeting_name\", meeting.code, pe.id_person,pe.nick,pe.name,pe.surname,pe.email,mp.user_type FROM debt.person AS pe" +
+                    " INNER JOIN debt.meeting_person AS mp ON pe.id_person = mp.id_person" +
+                    " INNER JOIN debt.meeting ON meeting.id_meeting = mp.id_meeting" +
+                    " WHERE meeting.code LIKE '"+ code +"';");
+
+            while ( rs.next() ) {
+                Integer sqlMeId = rs.getInt("id_meeting");
+                String sqlNameMe = rs.getString("meeting_name");
+                String sqlCode = rs.getString("code");
+                meId = sqlMeId;
+                nameMe = sqlNameMe;
+                codeMe = sqlCode;
+                Integer sqlPeId = rs.getInt("id_person");
+                String sqlNick = rs.getString("nick");
+                String sqlName = rs.getString("name");
+                String sqlSurname = rs.getString("surname");
+                String sqlEmail = rs.getString("email");
+                String sqlType = rs.getString("user_type");
+                personMeetingDtos.add(new PersonMeetingDto(sqlPeId,sqlNick,sqlName,sqlSurname,sqlEmail,sqlType));
+            }
+            rs.close();
+            stmt.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        meetingDetailsDto = new MeetingDetailsDto(meId,nameMe,codeMe,personMeetingDtos);
+        System.out.println("Users from meeting " + code +" downloaded successfully");
     }
 }

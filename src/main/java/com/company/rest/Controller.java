@@ -1,6 +1,7 @@
 package com.company.rest;
 
 import com.company.dto.LoginDto;
+import com.company.dto.MeetingDto;
 import com.company.dto.RegisterDto;
 import com.company.service.UserService;
 import org.slf4j.Logger;
@@ -37,6 +38,10 @@ public class Controller {
     public ResponseEntity getPeopleMeetingJson(@PathVariable Integer id_meeting){
         return ResponseEntity.ok(userService.getPersonMeetingListDto(id_meeting));
     }
+    @GetMapping(value = "/meeting_details_code/{code}")
+    public ResponseEntity getPeopleMeetingJson(@PathVariable String code){
+        return ResponseEntity.ok(userService.getMeetingDetailsCode(code));
+    }
     @CrossOrigin
     @PostMapping(value = "/login")
     public ResponseEntity loginUserJson(@RequestBody LoginDto loginDto){
@@ -58,6 +63,18 @@ public class Controller {
         else{
             LOGGER.info("---- User with email: " + registerDto.getEmail() + " already exists in database ----");
             return ResponseEntity.badRequest().body(registerDto.getEmail() + " already exists in database");
+        }
+    }
+    @CrossOrigin
+    @PostMapping(value = "/join_meeting/{code}")
+    public ResponseEntity registerUserJson(@PathVariable String code){
+        if(userService.joinThruCode(code)){
+            LOGGER.info("---- User: " + userService.getLoggedUser().getNick() + " joined meeting ----");
+            return ResponseEntity.ok().body("---- User: " + userService.getLoggedUser().getNick() + " joined meeting ----");
+        }
+        else{
+            LOGGER.info("---- There is no meeting with code: "+ code +" ----");
+            return ResponseEntity.badRequest().body("---- There is no meeting with code: "+ code +" ----");
         }
     }
 

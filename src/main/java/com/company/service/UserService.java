@@ -9,4 +9,6 @@ public interface UserService {
     UserDto getLoggedUser();
     boolean registerUser(RegisterDto registerDto);
     MeetingDetailsDto getPersonMeetingListDto(Integer id_meeting);
+    boolean joinThruCode(String code);
+    MeetingDetailsDto getMeetingDetailsCode(String code);
 }
