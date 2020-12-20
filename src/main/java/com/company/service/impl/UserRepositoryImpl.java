@@ -1,7 +1,6 @@
 package com.company.service.impl;
 
-import com.company.dto.UserDto;
-import com.company.dto.UserListDto;
+import com.company.dto.*;
 import com.company.service.UserRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,9 +14,11 @@ import java.util.List;
 @Repository
 public class UserRepositoryImpl implements UserRepository {
     private UserListDto userListDto;
+    private MeetingListDto meetingListDto;
 
     public UserRepositoryImpl() {
         initUsers();
+        initMeetings();
     }
 
     @Override
@@ -26,9 +27,10 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void addUser(UserDto user) {
-        userListDto.getUsers().add(user);
+    public MeetingListDto getMeetings() {
+        return meetingListDto;
     }
+
     @Override
     public void initUsers(){
         Connection c = null;
@@ -61,7 +63,7 @@ public class UserRepositoryImpl implements UserRepository {
             System.exit(0);
         }
         userListDto = new UserListDto(users);
-        System.out.println("Operation done successfully");
+        System.out.println("Users downloaded successfully");
     }
     @Override
     public UserDto findUser(String email, String password){
@@ -71,5 +73,36 @@ public class UserRepositoryImpl implements UserRepository {
             }
         }
         return null;
+    }
+    @Override
+    public void initMeetings(){
+        Connection c = null;
+        Statement stmt  = null;
+        List<MeetingDto> meetingDtos  = new ArrayList<>();
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://195.150.230.210:5434/2020_hamernik_artur",
+                            "2020_hamernik_artur", "31996");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
+
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery( "SELECT * FROM debt.meeting");
+            while ( rs.next() ) {
+                Integer sqlId = rs.getInt("id_meeting");
+                String sqlName = rs.getString("name");
+                String sqlCode = rs.getString("code");
+                meetingDtos.add(new MeetingDto(sqlId,sqlName,sqlCode));
+            }
+            rs.close();
+            stmt.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        meetingListDto = new MeetingListDto(meetingDtos);
+        System.out.println("Meetings downloaded successfully");
     }
 }

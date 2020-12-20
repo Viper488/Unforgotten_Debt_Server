@@ -1,6 +1,7 @@
 package com.company.rest;
 
 import com.company.dto.LoginDto;
+import com.company.dto.RegisterDto;
 import com.company.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,16 +29,35 @@ public class Controller {
     public ResponseEntity getUsersJson(){
         return ResponseEntity.ok(userService.getUsers());
     }
-
+    @GetMapping(value = "/meetings")
+    public ResponseEntity getMeetingsJson(){
+        return ResponseEntity.ok(userService.getMeetings());
+    }
+    @GetMapping(value = "/meeting_details/{id_meeting}")
+    public ResponseEntity getPeopleMeetingJson(@PathVariable Integer id_meeting){
+        return ResponseEntity.ok(userService.getPersonMeetingListDto(id_meeting));
+    }
     @CrossOrigin
     @PostMapping(value = "/login")
-    public ResponseEntity loginUser(@RequestBody LoginDto loginDto){
+    public ResponseEntity loginUserJson(@RequestBody LoginDto loginDto){
         if(userService.logIn(loginDto)){
             LOGGER.info("---- Logged user: " + userService.getLoggedUser().getName() + " " + userService.getLoggedUser().getSurname()+" ----");
             return ResponseEntity.ok().build();
         }
         else{
             return ResponseEntity.notFound().build();
+        }
+    }
+    @CrossOrigin
+    @PostMapping(value = "/register")
+    public ResponseEntity registerUserJson(@RequestBody RegisterDto registerDto){
+        if(userService.registerUser(registerDto)){
+            LOGGER.info("---- Registered user: " + registerDto.getEmail() +" ----");
+            return ResponseEntity.ok().body("Registered user: " + registerDto.getEmail());
+        }
+        else{
+            LOGGER.info("---- User with email: " + registerDto.getEmail() + " already exists in database ----");
+            return ResponseEntity.badRequest().body(registerDto.getEmail() + " already exists in database");
         }
     }
 
