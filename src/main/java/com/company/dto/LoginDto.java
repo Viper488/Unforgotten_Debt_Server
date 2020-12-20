@@ -1,15 +1,14 @@
-package com.company.domain;
+package com.company.dto;
 
 import lombok.NoArgsConstructor;
 
-
 @NoArgsConstructor
-public class LogginData {
-    private String nick;
+public class LoginDto {
+    private String email;
     private String password;
 
-    public String getNick() {
-        return nick;
+    public String getEmail() {
+        return email;
     }
 
     public String getPassword() {

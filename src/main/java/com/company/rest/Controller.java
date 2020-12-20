@@ -1,8 +1,7 @@
 package com.company.rest;
 
-
-import com.company.domain.LogginData;
-import com.company.service.LoggingService;
+import com.company.dto.LoginDto;
+import com.company.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +14,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/ud-server/")
 public class Controller {
     private static final Logger LOGGER  = LoggerFactory.getLogger(Controller.class);
+
     @Autowired
-    LoggingService loggingService;
+    UserService userService;
 
     @CrossOrigin
     @GetMapping(value = "/start")
@@ -24,11 +24,21 @@ public class Controller {
         return new ResponseEntity("dzialam", HttpStatus.OK);
     }
 
-    @CrossOrigin
-    @PutMapping(value = "/loginUser")
-    public ResponseEntity loginUser(@RequestBody LogginData logginData){
+    @GetMapping(value = "/users")
+    public ResponseEntity getUsersJson(){
+        return ResponseEntity.ok(userService.getUsers());
+    }
 
-        return loggingService.logging(logginData) ? new ResponseEntity(true,HttpStatus.OK): new ResponseEntity("bad login or password",HttpStatus.FORBIDDEN) ;
+    @CrossOrigin
+    @PostMapping(value = "/login")
+    public ResponseEntity loginUser(@RequestBody LoginDto loginDto){
+        if(userService.logIn(loginDto)){
+            LOGGER.info("---- Logged user: " + userService.getLoggedUser().getName() + " " + userService.getLoggedUser().getSurname()+" ----");
+            return ResponseEntity.ok().build();
+        }
+        else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
 //    @CrossOrigin
