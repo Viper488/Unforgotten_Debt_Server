@@ -2,6 +2,7 @@ package com.company.rest;
 
 import com.company.dto.LoginDto;
 import com.company.dto.MeetingDto;
+import com.company.dto.PaymentDto;
 import com.company.dto.RegisterDto;
 import com.company.service.UserService;
 import org.slf4j.Logger;
@@ -25,7 +26,6 @@ public class Controller {
     public ResponseEntity workingHttp(){
         return new ResponseEntity("dzialam", HttpStatus.OK);
     }
-
     @GetMapping(value = "/users")
     public ResponseEntity getUsersJson(){
         return ResponseEntity.ok(userService.getUsers());
@@ -67,7 +67,7 @@ public class Controller {
     }
     @CrossOrigin
     @PostMapping(value = "/join_meeting/{code}")
-    public ResponseEntity registerUserJson(@PathVariable String code){
+    public ResponseEntity joinMeeting(@PathVariable String code){
         if(userService.joinThruCode(code)){
             LOGGER.info("---- User: " + userService.getLoggedUser().getNick() + " joined meeting ----");
             return ResponseEntity.ok().body("---- User: " + userService.getLoggedUser().getNick() + " joined meeting ----");
@@ -77,7 +77,26 @@ public class Controller {
             return ResponseEntity.badRequest().body("---- There is no meeting with code: "+ code +" ----");
         }
     }
-
+    @CrossOrigin
+    @PostMapping(value = "/payment")
+    public ResponseEntity insertPayment(@RequestBody PaymentDto paymentDto){
+        if(userService.insertPayment(paymentDto)){
+            LOGGER.info("---- Payment registered successfully ----");
+            return ResponseEntity.ok().body("Payment registered successfully");
+        }
+        else{
+            LOGGER.info("---- Error occurred ----");
+            return ResponseEntity.badRequest().body("Error occurred");
+        }
+    }
+    @GetMapping(value = "/payments_meeting/{id_meeting}")
+    public ResponseEntity getPaymentByMeeting(@PathVariable Integer id_meeting){
+        return ResponseEntity.ok(userService.getPayments(id_meeting,null,"Meeting"));
+    }
+    @GetMapping(value = "/payments_person/{id_person}")
+    public ResponseEntity getPaymentByPerson(@PathVariable Integer id_person){
+        return ResponseEntity.ok(userService.getPayments(null,id_person,"Person"));
+    }
 //    @CrossOrigin
 //    @PostMapping(value = "/registerUser")
 //    public ResponseEntity registerUser(@RequestBody AccountData accountData){

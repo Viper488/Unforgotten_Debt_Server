@@ -11,4 +11,6 @@ public interface UserService {
     MeetingDetailsDto getPersonMeetingListDto(Integer id_meeting);
     boolean joinThruCode(String code);
     MeetingDetailsDto getMeetingDetailsCode(String code);
+    boolean insertPayment(PaymentDto paymentDto);
+    PaymentListDto getPayments(Integer idTable, Integer idPerson, String which);
 }
