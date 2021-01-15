@@ -29,28 +29,39 @@ public class UserServiceImpl implements UserService {
 
     public UserServiceImpl() {
     }
+
     @Override
     public UserListDto getUsers() {
+        userRepository.initUsers();
+        userRepository.initMeetings();
         return userRepository.getUsers();
     }
 
     @Override
     public MeetingListDto getMeetings() {
+        userRepository.initUsers();
+        userRepository.initMeetings();
         return userRepository.getMeetings();
     }
     @Override
     public MeetingDetailsDto getPersonMeetingListDto(Integer id_meeting) {
+        userRepository.initUsers();
+        userRepository.initMeetings();
         loadPeopleMeting(id_meeting);
         return meetingDetailsDto;
     }
     @Override
     public MeetingDetailsDto getMeetingDetailsCode(String code) {
+        userRepository.initUsers();
+        userRepository.initMeetings();
         loadCodeMeting(code);
         return meetingDetailsDto;
     }
 
     @Override
     public MeetingListDto getPersonMeetings(Integer id_person) {
+        userRepository.initUsers();
+        userRepository.initMeetings();
         MeetingListDto meetingListDto;
         List<MeetingDto> list = new ArrayList<>();
         Connection c = null;
@@ -87,6 +98,8 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public boolean logIn(LoginDto loginDto) {
+        userRepository.initUsers();
+        userRepository.initMeetings();
         userDto = userRepository.findUser(loginDto.getEmail(), loginDto.getPassword());
         return userDto != null;
     }
@@ -97,6 +110,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean registerUser(RegisterDto registerDto) {
+        userRepository.initUsers();
+        userRepository.initMeetings();
+
         for (UserDto checkUser:userRepository.getUsers().getUsers()
              ) {
             if(checkUser.getEmail().equals(registerDto.getEmail())){
@@ -133,6 +149,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean joinThruCode(String code,String password, String memberType){
+        userRepository.initUsers();
+        userRepository.initMeetings();
+
         boolean meetingExist = false;
         MeetingDto meetingDto = null;
         for (MeetingDto meeting:userRepository.getMeetings().getMeetingDtoList()
@@ -382,6 +401,8 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public boolean insertPayment(PaymentDto paymentDto){
+        userRepository.initUsers();
+        userRepository.initMeetings();
         Connection c = null;
         Statement stmt  = null;
         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -429,6 +450,8 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public PaymentListDto getPayments(Integer idTable, Integer idPerson, String which){
+        userRepository.initUsers();
+        userRepository.initMeetings();
         String query;
         if(which.equals("Person")){
             query = "SELECT * FROM debt.payment WHERE id_person = " + idPerson+";";
@@ -485,6 +508,8 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public boolean createMeeting(String name, String password){
+        userRepository.initUsers();
+        userRepository.initMeetings();
         Connection c = null;
         Statement stmt  = null;
         String code = null;
@@ -521,6 +546,9 @@ public class UserServiceImpl implements UserService {
     };
     @Override
     public ProductListDto getProducts(Integer id_meeting){
+        userRepository.initUsers();
+        userRepository.initMeetings();
+
         List<ProductDto> list = new ArrayList<>();
         ProductListDto productListDto;
         Connection c = null;
@@ -561,6 +589,9 @@ public class UserServiceImpl implements UserService {
     };
     @Override
     public boolean insertProduct(String name, Double price, Integer id_person, Integer id_meeting){
+        userRepository.initUsers();
+        userRepository.initMeetings();
+
         Connection c = null;
         Statement stmt  = null;
         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
