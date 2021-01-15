@@ -66,9 +66,20 @@ public class Controller {
         }
     }
     @CrossOrigin
+    @PostMapping(value = "/create_meeting")
+    public ResponseEntity createMeeting(@RequestParam String name, @RequestParam String password){
+        if(userService.createMeeting(name, password)){
+            LOGGER.info("---- Meeting created successfully ----");
+            return ResponseEntity.ok().body("Meeting created successfully");
+        }
+        else{
+            LOGGER.info("---- Error occurred ----");
+            return ResponseEntity.badRequest().body("Error occurred");
+        }
+    }
     @PostMapping(value = "/join_meeting")
     public ResponseEntity joinMeeting(@RequestParam String code, @RequestParam String password){
-        if(userService.joinThruCode(code,password)){
+        if(userService.joinThruCode(code,password,"member")){
             LOGGER.info("---- User: " + userService.getLoggedUser().getNick() + " joined meeting ----");
             return ResponseEntity.ok().body("---- User: " + userService.getLoggedUser().getNick() + " joined meeting ----");
         }

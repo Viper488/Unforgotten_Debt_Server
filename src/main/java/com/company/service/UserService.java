@@ -9,8 +9,9 @@ public interface UserService {
     UserDto getLoggedUser();
     boolean registerUser(RegisterDto registerDto);
     MeetingDetailsDto getPersonMeetingListDto(Integer id_meeting);
-    boolean joinThruCode(String code, String password);
+    boolean joinThruCode(String code, String password, String memberType);
     MeetingDetailsDto getMeetingDetailsCode(String code);
     boolean insertPayment(PaymentDto paymentDto);
     PaymentListDto getPayments(Integer idTable, Integer idPerson, String which);
+    boolean createMeeting(String name, String password);
 }

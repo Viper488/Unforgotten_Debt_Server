@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean joinThruCode(String code,String password){
+    public boolean joinThruCode(String code,String password, String memberType){
         boolean meetingExist = false;
         MeetingDto meetingDto = null;
         for (MeetingDto meeting:userRepository.getMeetings().getMeetingDtoList()
@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
 
             stmt = c.createStatement();
             stmt.executeUpdate(
-                    "INSERT INTO debt.meeting_person VALUES("+ meetingDto.getId_meeting() +","+ userDto.getId_person() +",'member');");
+                    "INSERT INTO debt.meeting_person VALUES("+ meetingDto.getId_meeting() +","+ getLoggedUser().getId_person() +",'"+ memberType +"');");
             stmt.close();
             c.commit();
             c.close();
@@ -289,6 +289,33 @@ public class UserServiceImpl implements UserService {
         System.out.println("Free id: " + freeId);
         return freeId;
     }
+    private Integer getFreeMeetingId(){
+        Connection c = null;
+        Statement stmt  = null;
+        Integer freeId = null;
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://195.150.230.210:5434/2020_hamernik_artur",
+                            "2020_hamernik_artur", "31996");
+            c.setAutoCommit(false);
+
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery( "SELECT MAX(id_meeting)+1 AS \"free_id\" FROM debt.meeting");
+            while ( rs.next() ) {
+                Integer sqlId = rs.getInt("free_id");
+                freeId = sqlId;
+            }
+            rs.close();
+            stmt.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Free id: " + freeId);
+        return freeId;
+    }
 
     @Override
     public boolean insertPayment(PaymentDto paymentDto){
@@ -382,4 +409,40 @@ public class UserServiceImpl implements UserService {
         System.out.println("Payments downloaded successfully");
         return  paymentListDto;
     }
+
+    @Override
+    public boolean createMeeting(String name, String password){
+        Connection c = null;
+        Statement stmt  = null;
+        String numbers = "0123456789";
+        char[] chars = numbers.toCharArray();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for(int i =0; i<6;i++){
+            stringBuilder.append(chars[(int) (Math.random() * 10)]);
+        }
+        String code = stringBuilder.toString();
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://195.150.230.210:5434/2020_hamernik_artur",
+                            "2020_hamernik_artur", "31996");
+            c.setAutoCommit(false);
+
+            stmt = c.createStatement();
+            stmt.executeUpdate(
+                    "INSERT INTO debt.meeting(id_meeting, name, code, password) VALUES("+ getFreeMeetingId() + ",'" + name + "','" + code + "','" + password +"');");
+            stmt.close();
+            c.commit();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+            System.out.println("Insert Meeting failed");
+            return false;
+        }
+        System.out.println("Insert Meeting done successfully");
+        userRepository.initMeetings();
+        return joinThruCode(code,password,"owner");
+    };
 }
