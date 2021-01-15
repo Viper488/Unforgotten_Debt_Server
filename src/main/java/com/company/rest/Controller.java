@@ -1,9 +1,6 @@
 package com.company.rest;
 
-import com.company.dto.LoginDto;
-import com.company.dto.MeetingDto;
-import com.company.dto.PaymentDto;
-import com.company.dto.RegisterDto;
+import com.company.dto.*;
 import com.company.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +44,7 @@ public class Controller {
     public ResponseEntity loginUserJson(@RequestBody LoginDto loginDto){
         if(userService.logIn(loginDto)){
             LOGGER.info("---- Logged user: " + userService.getLoggedUser().getName() + " " + userService.getLoggedUser().getSurname()+" ----");
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body(new LoggedUser(userService.getLoggedUser().getId_person(),userService.getLoggedUser().getNick()));
         }
         else{
             return ResponseEntity.notFound().build();
