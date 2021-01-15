@@ -35,8 +35,8 @@ public class Controller {
     public ResponseEntity getPeopleMeetingJson(@PathVariable Integer id_meeting){
         return ResponseEntity.ok(userService.getPersonMeetingListDto(id_meeting));
     }
-    @GetMapping(value = "/meeting_details_code/{code}")
-    public ResponseEntity getPeopleMeetingJson(@PathVariable String code){
+    @GetMapping(value = "/meeting_details_code")
+    public ResponseEntity getPeopleMeetingJson(@RequestParam String code){
         return ResponseEntity.ok(userService.getMeetingDetailsCode(code));
     }
     @CrossOrigin
