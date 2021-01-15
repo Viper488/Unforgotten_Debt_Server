@@ -6,15 +6,17 @@ public class MeetingDetailsDto {
     private Integer id_meeting;
     private String name;
     private String code;
+    private String password;
     private List<PersonMeetingDto> personMeetingList;
 
     public MeetingDetailsDto() {
     }
 
-    public MeetingDetailsDto(Integer id_meeting, String name, String code, List<PersonMeetingDto> personMeetingList) {
+    public MeetingDetailsDto(Integer id_meeting, String name, String code, String password, List<PersonMeetingDto> personMeetingList) {
         this.id_meeting = id_meeting;
         this.name = name;
         this.code = code;
+        this.password = password;
         this.personMeetingList = personMeetingList;
     }
 
@@ -48,5 +50,12 @@ public class MeetingDetailsDto {
 
     public void setPersonMeetingList(List<PersonMeetingDto> personMeetingList) {
         this.personMeetingList = personMeetingList;
+    }
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

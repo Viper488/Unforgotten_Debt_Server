@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean joinThruCode(String code){
+    public boolean joinThruCode(String code,String password){
         boolean meetingExist = false;
         MeetingDto meetingDto = null;
         for (MeetingDto meeting:userRepository.getMeetings().getMeetingDtoList()
@@ -106,6 +106,9 @@ public class UserServiceImpl implements UserService {
             }
         }
         if (!meetingExist){
+            return false;
+        }
+        else if(!meetingDto.getPassword().equals(password)){
             return false;
         }
         Connection c = null;
@@ -166,6 +169,7 @@ public class UserServiceImpl implements UserService {
         Integer meId = null;
         String nameMe = null;
         String code = null;
+        String password = null;
         Connection c = null;
         Statement stmt  = null;
         try {
@@ -176,7 +180,7 @@ public class UserServiceImpl implements UserService {
             c.setAutoCommit(false);
 
             stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery( "SELECT meeting.id_meeting,meeting.name AS \"meeting_name\", meeting.code, pe.id_person,pe.nick,pe.name,pe.surname,pe.email,mp.user_type FROM debt.person AS pe" +
+            ResultSet rs = stmt.executeQuery( "SELECT meeting.id_meeting,meeting.name AS \"meeting_name\", meeting.code, meeting.password, pe.id_person,pe.nick,pe.name,pe.surname,pe.email,mp.user_type FROM debt.person AS pe" +
                     " INNER JOIN debt.meeting_person AS mp ON pe.id_person = mp.id_person" +
                     " INNER JOIN debt.meeting ON meeting.id_meeting = mp.id_meeting" +
                     " WHERE meeting.id_meeting = "+ id_meeting);
@@ -185,9 +189,11 @@ public class UserServiceImpl implements UserService {
                 Integer sqlMeId = rs.getInt("id_meeting");
                 String sqlNameMe = rs.getString("meeting_name");
                 String sqlCode = rs.getString("code");
+                String sqlPassword = rs.getString("password");
                 meId = sqlMeId;
                 nameMe = sqlNameMe;
                 code = sqlCode;
+                password = sqlPassword;
                 Integer sqlPeId = rs.getInt("id_person");
                 String sqlNick = rs.getString("nick");
                 String sqlName = rs.getString("name");
@@ -203,7 +209,7 @@ public class UserServiceImpl implements UserService {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(0);
         }
-        meetingDetailsDto = new MeetingDetailsDto(meId,nameMe,code,personMeetingDtos);
+        meetingDetailsDto = new MeetingDetailsDto(meId,nameMe,code,password,personMeetingDtos);
         System.out.println("Users from meeting " + id_meeting +" downloaded successfully");
     }
 
@@ -212,6 +218,7 @@ public class UserServiceImpl implements UserService {
         Integer meId = null;
         String nameMe = null;
         String codeMe = null;
+        String passwordMe = null;
         Connection c = null;
         Statement stmt  = null;
         try {
@@ -222,7 +229,7 @@ public class UserServiceImpl implements UserService {
             c.setAutoCommit(false);
 
             stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery( "SELECT meeting.id_meeting,meeting.name AS \"meeting_name\", meeting.code, pe.id_person,pe.nick,pe.name,pe.surname,pe.email,mp.user_type FROM debt.person AS pe" +
+            ResultSet rs = stmt.executeQuery( "SELECT meeting.id_meeting,meeting.name AS \"meeting_name\", meeting.code, meeting.password, pe.id_person,pe.nick,pe.name,pe.surname,pe.email,mp.user_type FROM debt.person AS pe" +
                     " INNER JOIN debt.meeting_person AS mp ON pe.id_person = mp.id_person" +
                     " INNER JOIN debt.meeting ON meeting.id_meeting = mp.id_meeting" +
                     " WHERE meeting.code LIKE '"+ code +"';");
@@ -231,9 +238,11 @@ public class UserServiceImpl implements UserService {
                 Integer sqlMeId = rs.getInt("id_meeting");
                 String sqlNameMe = rs.getString("meeting_name");
                 String sqlCode = rs.getString("code");
+                String sqlPassword = rs.getString("password");
                 meId = sqlMeId;
                 nameMe = sqlNameMe;
                 codeMe = sqlCode;
+                passwordMe = sqlPassword;
                 Integer sqlPeId = rs.getInt("id_person");
                 String sqlNick = rs.getString("nick");
                 String sqlName = rs.getString("name");
@@ -249,7 +258,7 @@ public class UserServiceImpl implements UserService {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(0);
         }
-        meetingDetailsDto = new MeetingDetailsDto(meId,nameMe,codeMe,personMeetingDtos);
+        meetingDetailsDto = new MeetingDetailsDto(meId,nameMe,codeMe,passwordMe,personMeetingDtos);
         System.out.println("Users from meeting " + code +" downloaded successfully");
     }
 

@@ -66,15 +66,15 @@ public class Controller {
         }
     }
     @CrossOrigin
-    @PostMapping(value = "/join_meeting/{code}")
-    public ResponseEntity joinMeeting(@PathVariable String code){
-        if(userService.joinThruCode(code)){
+    @PostMapping(value = "/join_meeting")
+    public ResponseEntity joinMeeting(@RequestParam String code, @RequestParam String password){
+        if(userService.joinThruCode(code,password)){
             LOGGER.info("---- User: " + userService.getLoggedUser().getNick() + " joined meeting ----");
             return ResponseEntity.ok().body("---- User: " + userService.getLoggedUser().getNick() + " joined meeting ----");
         }
         else{
             LOGGER.info("---- There is no meeting with code: "+ code +" ----");
-            return ResponseEntity.badRequest().body("---- There is no meeting with code: "+ code +" ----");
+            return ResponseEntity.badRequest().body("---- There is no meeting with code: "+ code +", or password is wrong ----");
         }
     }
     @CrossOrigin

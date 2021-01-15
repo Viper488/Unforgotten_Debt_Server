@@ -4,14 +4,16 @@ public class MeetingDto {
     private Integer id_meeting;
     private String name;
     private String code;
+    private String password;
 
     public MeetingDto() {
     }
 
-    public MeetingDto(Integer id_meeting, String name, String code) {
+    public MeetingDto(Integer id_meeting, String name, String code, String password) {
         this.id_meeting = id_meeting;
         this.name = name;
         this.code = code;
+        this.password = password;
     }
 
     public Integer getId_meeting() {
@@ -36,5 +38,13 @@ public class MeetingDto {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

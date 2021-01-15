@@ -93,7 +93,8 @@ public class UserRepositoryImpl implements UserRepository {
                 Integer sqlId = rs.getInt("id_meeting");
                 String sqlName = rs.getString("name");
                 String sqlCode = rs.getString("code");
-                meetingDtos.add(new MeetingDto(sqlId,sqlName,sqlCode));
+                String sqlPassword = rs.getString("password");
+                meetingDtos.add(new MeetingDto(sqlId,sqlName,sqlCode,sqlPassword));
             }
             rs.close();
             stmt.close();
