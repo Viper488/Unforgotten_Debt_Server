@@ -108,6 +108,10 @@ public class Controller {
     public ResponseEntity getPaymentByPerson(@PathVariable Integer id_person){
         return ResponseEntity.ok(userService.getPayments(null,id_person,"Person"));
     }
+    @GetMapping(value = "/person_meetings")
+    public ResponseEntity getPersonMeetings(@RequestParam Integer id_person){
+        return ResponseEntity.ok(userService.getPersonMeetings(id_person));
+    }
 //    @CrossOrigin
 //    @PostMapping(value = "/registerUser")
 //    public ResponseEntity registerUser(@RequestBody AccountData accountData){

@@ -14,4 +14,5 @@ public interface UserService {
     boolean insertPayment(PaymentDto paymentDto);
     PaymentListDto getPayments(Integer idTable, Integer idPerson, String which);
     boolean createMeeting(String name, String password);
+    MeetingListDto getPersonMeetings(Integer id_person);
 }

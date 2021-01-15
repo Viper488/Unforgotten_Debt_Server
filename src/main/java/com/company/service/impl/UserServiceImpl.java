@@ -48,6 +48,43 @@ public class UserServiceImpl implements UserService {
         loadCodeMeting(code);
         return meetingDetailsDto;
     }
+
+    @Override
+    public MeetingListDto getPersonMeetings(Integer id_person) {
+        MeetingListDto meetingListDto;
+        List<MeetingDto> list = new ArrayList<>();
+        Connection c = null;
+        Statement stmt  = null;
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://195.150.230.210:5434/2020_hamernik_artur",
+                            "2020_hamernik_artur", "31996");
+            c.setAutoCommit(false);
+
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery( "SELECT m.id_meeting, name, code, password FROM debt.meeting AS m "
+                    + "INNER JOIN debt.meeting_person AS mp ON mp.id_meeting = m.id_meeting "+
+                    "WHERE mp.id_person = "+ id_person +';');
+
+            while ( rs.next() ) {
+                Integer sqlId = rs.getInt("id_meeting");
+                String sqlName = rs.getString("name");
+                String sqlCode = rs.getString("code");
+                String sqlPassword = rs.getString("password");
+                list.add(new MeetingDto(sqlId,sqlName,sqlCode,sqlPassword));
+            }
+            rs.close();
+            stmt.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        meetingListDto = new MeetingListDto(list);
+        System.out.println("Person" + id_person + " meetings downloaded successfully");
+        return meetingListDto;
+    }
     @Override
     public boolean logIn(LoginDto loginDto) {
         userDto = userRepository.findUser(loginDto.getEmail(), loginDto.getPassword());
@@ -410,10 +447,7 @@ public class UserServiceImpl implements UserService {
         return  paymentListDto;
     }
 
-    @Override
-    public boolean createMeeting(String name, String password){
-        Connection c = null;
-        Statement stmt  = null;
+    private String randomCode(){
         String numbers = "0123456789";
         char[] chars = numbers.toCharArray();
         StringBuilder stringBuilder = new StringBuilder();
@@ -421,7 +455,22 @@ public class UserServiceImpl implements UserService {
         for(int i =0; i<6;i++){
             stringBuilder.append(chars[(int) (Math.random() * 10)]);
         }
-        String code = stringBuilder.toString();
+        return stringBuilder.toString();
+    }
+    //meetingi dla uzytkownika
+    @Override
+    public boolean createMeeting(String name, String password){
+        Connection c = null;
+        Statement stmt  = null;
+        String code = null;
+        MeetingListDto meetingListDto = userRepository.getMeetings();
+        code = randomCode();
+        for (MeetingDto meeting:meetingListDto.getMeetingDtoList()
+             ) {
+            if(code.equals(meeting.getCode())){
+                code = randomCode();
+            }
+        }
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
@@ -445,4 +494,5 @@ public class UserServiceImpl implements UserService {
         userRepository.initMeetings();
         return joinThruCode(code,password,"owner");
     };
+
 }
