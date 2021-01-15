@@ -353,7 +353,33 @@ public class UserServiceImpl implements UserService {
         System.out.println("Free id: " + freeId);
         return freeId;
     }
+    private Integer getFreeProductId(){
+        Connection c = null;
+        Statement stmt  = null;
+        Integer freeId = null;
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://195.150.230.210:5434/2020_hamernik_artur",
+                            "2020_hamernik_artur", "31996");
+            c.setAutoCommit(false);
 
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery( "SELECT MAX(id_product)+1 AS \"free_id\" FROM debt.products");
+            while ( rs.next() ) {
+                Integer sqlId = rs.getInt("free_id");
+                freeId = sqlId;
+            }
+            rs.close();
+            stmt.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Free id: " + freeId);
+        return freeId;
+    }
     @Override
     public boolean insertPayment(PaymentDto paymentDto){
         Connection c = null;
@@ -457,7 +483,6 @@ public class UserServiceImpl implements UserService {
         }
         return stringBuilder.toString();
     }
-    //meetingi dla uzytkownika
     @Override
     public boolean createMeeting(String name, String password){
         Connection c = null;
@@ -494,5 +519,73 @@ public class UserServiceImpl implements UserService {
         userRepository.initMeetings();
         return joinThruCode(code,password,"owner");
     };
+    @Override
+    public ProductListDto getProducts(Integer id_meeting){
+        List<ProductDto> list = new ArrayList<>();
+        ProductListDto productListDto;
+        Connection c = null;
+        Statement stmt  = null;
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://195.150.230.210:5434/2020_hamernik_artur",
+                            "2020_hamernik_artur", "31996");
+            c.setAutoCommit(false);
 
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery( "SELECT * FROM debt.products WHERE id_meeting = "+ id_meeting+';');
+
+            while ( rs.next() ) {
+                Integer sqlId = rs.getInt("id_product");
+                String sqlName = rs.getString("name");
+                String sqlVal = rs.getString("price");
+                sqlVal = sqlVal.substring(0,sqlVal.length()-3);
+                Double noSqlVal = Double.valueOf(sqlVal.replace(',','.'));
+                Integer sqlPeId = rs.getInt("id_person");
+                Integer sqlMeId = rs.getInt("id_meeting");
+                list.add(new ProductDto(sqlId,sqlName,noSqlVal,sqlPeId,sqlMeId));
+            }
+            rs.close();
+            stmt.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        productListDto = new ProductListDto(list);
+        System.out.println("Products from meeting " + id_meeting +" downloaded successfully");
+
+        return productListDto;
+    };
+    @Override
+    public boolean insertProduct(String name, Double price, Integer id_person, Integer id_meeting){
+        Connection c = null;
+        Statement stmt  = null;
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date(System.currentTimeMillis());
+        String currentDate = formatter.format(date);
+        System.out.println(formatter.format(date));
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://195.150.230.210:5434/2020_hamernik_artur",
+                            "2020_hamernik_artur", "31996");
+            c.setAutoCommit(false);
+
+            stmt = c.createStatement();
+            stmt.executeUpdate(
+                    "INSERT INTO debt.products(id_product, name, price, id_person, id_meeting) VALUES("+ getFreeProductId() + ",'" + name + "'," + price +","
+                            + id_person +"," + id_meeting +");");
+            stmt.close();
+            c.commit();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+            System.out.println("Insert Product failed");
+            return false;
+        }
+        System.out.println("Insert Product done successfully");
+        return true;
+    };
 }

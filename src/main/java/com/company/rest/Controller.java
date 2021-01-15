@@ -109,6 +109,21 @@ public class Controller {
     public ResponseEntity getPersonMeetings(@RequestParam Integer id_person){
         return ResponseEntity.ok(userService.getPersonMeetings(id_person));
     }
+    @GetMapping(value = "/products")
+    public ResponseEntity getProducts(@RequestParam Integer id_meeting){
+        return ResponseEntity.ok(userService.getProducts(id_meeting));
+    }
+    @PostMapping(value = "/product")
+    public ResponseEntity insertPayment(@RequestParam String name, @RequestParam Double price, @RequestParam Integer id_person, @RequestParam Integer id_meeting){
+        if(userService.insertProduct(name, price, id_person, id_meeting)){
+            LOGGER.info("---- Product inserted successfully ----");
+            return ResponseEntity.ok().body("Product inserted successfully");
+        }
+        else{
+            LOGGER.info("---- Error occurred ----");
+            return ResponseEntity.badRequest().body("Error occurred");
+        }
+    }
 //    @CrossOrigin
 //    @PostMapping(value = "/registerUser")
 //    public ResponseEntity registerUser(@RequestBody AccountData accountData){
