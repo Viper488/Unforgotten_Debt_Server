@@ -57,11 +57,11 @@ public class Controller {
         System.out.println(check);
         if(check){
             LOGGER.info("---- Registered user: " + registerDto.getEmail() +" ----");
-            return ResponseEntity.ok().body("Registered user: " + registerDto.getEmail());
+            return ResponseEntity.ok().build();
         }
         else{
             LOGGER.info("---- User with email: " + registerDto.getEmail() + " already exists in database ----");
-            return ResponseEntity.badRequest().body(registerDto.getEmail() + " already exists in database");
+            return ResponseEntity.badRequest().build();
         }
     }
     @CrossOrigin
