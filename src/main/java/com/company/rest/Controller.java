@@ -53,7 +53,9 @@ public class Controller {
     @CrossOrigin
     @PostMapping(value = "/register")
     public ResponseEntity registerUserJson(@RequestBody RegisterDto registerDto){
-        if(userService.registerUser(registerDto)){
+        boolean check  = userService.registerUser(registerDto);
+        System.out.println(check);
+        if(check){
             LOGGER.info("---- Registered user: " + registerDto.getEmail() +" ----");
             return ResponseEntity.ok().body("Registered user: " + registerDto.getEmail());
         }

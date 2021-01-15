@@ -136,15 +136,17 @@ public class UserServiceImpl implements UserService {
             stmt.close();
             c.commit();
             c.close();
+            System.out.println("Insert Person done successfully");
+            userRepository.initUsers();
+            return true;
+
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(0);
             System.out.println("Insert Person failed");
             return false;
         }
-        System.out.println("Insert Person done successfully");
-        userRepository.initUsers();
-        return true;
+
     }
 
     @Override
