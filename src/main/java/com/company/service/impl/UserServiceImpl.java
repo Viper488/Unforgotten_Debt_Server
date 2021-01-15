@@ -533,7 +533,9 @@ public class UserServiceImpl implements UserService {
             c.setAutoCommit(false);
 
             stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery( "SELECT * FROM debt.products WHERE id_meeting = "+ id_meeting+';');
+            ResultSet rs = stmt.executeQuery( "SELECT id_product, pr.name, price, nick, id_meeting FROM debt.products AS pr " +
+                    "INNER JOIN debt.person AS pe ON pe.id_person = pr.id_person " +
+                    "WHERE id_meeting = "+ id_meeting+';');
 
             while ( rs.next() ) {
                 Integer sqlId = rs.getInt("id_product");
@@ -541,9 +543,9 @@ public class UserServiceImpl implements UserService {
                 String sqlVal = rs.getString("price");
                 sqlVal = sqlVal.substring(0,sqlVal.length()-3);
                 Double noSqlVal = Double.valueOf(sqlVal.replace(',','.'));
-                Integer sqlPeId = rs.getInt("id_person");
+                String sqlNick = rs.getString("nick");
                 Integer sqlMeId = rs.getInt("id_meeting");
-                list.add(new ProductDto(sqlId,sqlName,noSqlVal,sqlPeId,sqlMeId));
+                list.add(new ProductDto(sqlId,sqlName,noSqlVal,sqlNick,sqlMeId));
             }
             rs.close();
             stmt.close();

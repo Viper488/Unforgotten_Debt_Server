@@ -4,17 +4,17 @@ public class ProductDto {
     private Integer id_product;
     private String name;
     private Double price;
-    private Integer id_person;
+    private String nick;
     private Integer id_meeting;
 
     public ProductDto() {
     }
 
-    public ProductDto(Integer id_product, String name, Double price, Integer id_person, Integer id_meeting) {
+    public ProductDto(Integer id_product, String name, Double price, String nick, Integer id_meeting) {
         this.id_product = id_product;
         this.name = name;
         this.price = price;
-        this.id_person = id_person;
+        this.nick = nick;
         this.id_meeting = id_meeting;
     }
 
@@ -42,19 +42,19 @@ public class ProductDto {
         this.price = price;
     }
 
-    public Integer getId_person() {
-        return id_person;
-    }
-
-    public void setId_person(Integer id_person) {
-        this.id_person = id_person;
-    }
-
     public Integer getId_meeting() {
         return id_meeting;
     }
 
     public void setId_meeting(Integer id_meeting) {
         this.id_meeting = id_meeting;
+    }
+
+    public String getNick() {
+        return nick;
+    }
+
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 }
