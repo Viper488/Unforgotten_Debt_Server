@@ -44,7 +44,7 @@ public class Controller {
     public ResponseEntity loginUserJson(@RequestBody LoginDto loginDto){
         if(userService.logIn(loginDto)){
             LOGGER.info("---- Logged user: " + userService.getLoggedUser().getName() + " " + userService.getLoggedUser().getSurname()+" ----");
-            return ResponseEntity.ok().body(new LoggedUser(userService.getLoggedUser().getId_person(),userService.getLoggedUser().getNick()));
+            return ResponseEntity.ok().body(new LoggedUser(userService.getLoggedUser().getId_person(),userService.getLoggedUser().getNick(),userService.getLoggedUser().getName(),userService.getLoggedUser().getSurname()));
         }
         else{
             return ResponseEntity.notFound().build();
