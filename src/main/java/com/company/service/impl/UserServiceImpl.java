@@ -589,12 +589,12 @@ public class UserServiceImpl implements UserService {
     }
 
     private String randomCode(){
-        String numbers = "0123456789";
+        String numbers = "0123456789abcdefghijklmnoprstuvwxyz";
         char[] chars = numbers.toCharArray();
         StringBuilder stringBuilder = new StringBuilder();
 
         for(int i =0; i<6;i++){
-            stringBuilder.append(chars[(int) (Math.random() * 10)]);
+            stringBuilder.append(chars[(int) (Math.random() * chars.length)]);
         }
         return stringBuilder.toString();
     }
