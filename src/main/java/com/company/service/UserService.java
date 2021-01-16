@@ -17,4 +17,5 @@ public interface UserService {
     MeetingListDto getPersonMeetings(Integer id_person);
     ProductListDto getProducts(Integer id_meeting);
     boolean insertProduct(String name, Double price, Integer id_person, Integer id_meeting);
+    boolean deleteProduct(Integer id_product);
 }

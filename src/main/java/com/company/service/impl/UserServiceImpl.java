@@ -625,4 +625,34 @@ public class UserServiceImpl implements UserService {
         System.out.println("Insert Product done successfully");
         return true;
     };
+
+    @Override
+    public boolean deleteProduct(Integer id_product){
+        userRepository.initUsers();
+        userRepository.initMeetings();
+
+        Connection c = null;
+        Statement stmt  = null;
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://195.150.230.210:5434/2020_hamernik_artur",
+                            "2020_hamernik_artur", "31996");
+            c.setAutoCommit(false);
+
+            stmt = c.createStatement();
+            stmt.executeUpdate(
+                    "DELETE FROM debt.products WHERE id_product = " + id_product +";");
+            stmt.close();
+            c.commit();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+            System.out.println("Delete Product failed");
+            return false;
+        }
+        System.out.println("Delete Product done successfully");
+        return true;
+    };
 }

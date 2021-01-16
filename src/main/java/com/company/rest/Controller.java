@@ -116,7 +116,7 @@ public class Controller {
         return ResponseEntity.ok(userService.getProducts(id_meeting));
     }
     @PostMapping(value = "/product")
-    public ResponseEntity insertPayment(@RequestParam String name, @RequestParam Double price, @RequestParam Integer id_person, @RequestParam Integer id_meeting){
+    public ResponseEntity insertProduct(@RequestParam String name, @RequestParam Double price, @RequestParam Integer id_person, @RequestParam Integer id_meeting){
         if(userService.insertProduct(name, price, id_person, id_meeting)){
             LOGGER.info("---- Product inserted successfully ----");
             return ResponseEntity.ok().body("Product inserted successfully");
@@ -126,6 +126,19 @@ public class Controller {
             return ResponseEntity.badRequest().body("Error occurred");
         }
     }
+
+    @PostMapping(value = "/delete_product")
+    public ResponseEntity deleteProduct(@RequestParam Integer id_product){
+        if(userService.deleteProduct(id_product)){
+            LOGGER.info("---- Product deleted successfully ----");
+            return ResponseEntity.ok().body("Product deleted successfully");
+        }
+        else{
+            LOGGER.info("---- Error occurred ----");
+            return ResponseEntity.badRequest().body("Error occurred");
+        }
+    }
+
 //    @CrossOrigin
 //    @PostMapping(value = "/registerUser")
 //    public ResponseEntity registerUser(@RequestBody AccountData accountData){
