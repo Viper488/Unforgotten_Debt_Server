@@ -7,18 +7,18 @@ public class PaymentGetDto {
     String date;
     String time;
     Double value;
-    Integer id_person;
+    String nick;
     Integer id_meeting;
 
     public PaymentGetDto() {
     }
 
-    public PaymentGetDto(Integer id_payment, String date, String time, Double value, Integer id_person, Integer id_meeting) {
+    public PaymentGetDto(Integer id_payment, String date, String time, Double value, String nick, Integer id_meeting) {
         this.id_payment = id_payment;
         this.date = date;
         this.time = time;
         this.value = value;
-        this.id_person = id_person;
+        this.nick = nick;
         this.id_meeting = id_meeting;
     }
 
@@ -54,12 +54,12 @@ public class PaymentGetDto {
         this.value = value;
     }
 
-    public Integer getId_person() {
-        return id_person;
+    public String getNick() {
+        return nick;
     }
 
-    public void setId_person(Integer id_person) {
-        this.id_person = id_person;
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 
     public Integer getId_meeting() {

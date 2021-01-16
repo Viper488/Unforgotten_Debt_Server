@@ -546,10 +546,10 @@ public class UserServiceImpl implements UserService {
         userRepository.initMeetings();
         String query;
         if(which.equals("Person")){
-            query = "SELECT * FROM debt.payment WHERE id_person = " + idPerson+";";
+            query = "SELECT id_payment, value, (SELECT nick FROM debt.person AS pe WHERE pe.id_person = pa.id_person), id_meeting, date, time FROM debt.payment AS pa WHERE id_person = " + idPerson+";";
         }
         else{
-            query = "SELECT * FROM debt.payment WHERE id_meeting = " + idTable+";";
+            query = "SELECT id_payment, value, (SELECT nick FROM debt.person AS pe WHERE pe.id_person = pa.id_person), id_meeting, date, time FROM debt.payment AS pa WHERE id_meeting = " + idTable+";";
         }
         PaymentListDto paymentListDto;
         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -573,9 +573,9 @@ public class UserServiceImpl implements UserService {
                 String sqlVal = rs.getString("value");
                 sqlVal = sqlVal.substring(0,sqlVal.length()-3);
                 Double noSqlVal = Double.valueOf(sqlVal.replace(',','.'));
-                Integer sqlIdPerson = rs.getInt("id_person");
+                String sqlNick = rs.getString("nick");
                 Integer sqlIdMeeting = rs.getInt("id_meeting");
-                paymentGetDtos.add(new PaymentGetDto(sqlId,sqlDate,sqlTime,noSqlVal,sqlIdPerson,sqlIdMeeting));
+                paymentGetDtos.add(new PaymentGetDto(sqlId,sqlDate,sqlTime,noSqlVal,sqlNick,sqlIdMeeting));
             }
             rs.close();
             stmt.close();
