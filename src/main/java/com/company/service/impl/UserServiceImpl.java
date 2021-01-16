@@ -632,7 +632,7 @@ public class UserServiceImpl implements UserService {
         return  sumPayments;
     }
     private String randomCode(){
-        String numbers = "0123456789abcdefghijklmnoprstuvwxyz";
+        String numbers = "0123456789";
         char[] chars = numbers.toCharArray();
         StringBuilder stringBuilder = new StringBuilder();
 
