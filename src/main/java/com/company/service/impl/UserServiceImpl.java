@@ -563,7 +563,7 @@ public class UserServiceImpl implements UserService {
             c.setAutoCommit(false);
 
             stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery( "SELECT id_product, pr.name, price, nick, id_meeting FROM debt.products AS pr " +
+            ResultSet rs = stmt.executeQuery( "SELECT id_product, pr.name, price, nick, id_meeting, date, time FROM debt.products AS pr " +
                     "INNER JOIN debt.person AS pe ON pe.id_person = pr.id_person " +
                     "WHERE id_meeting = "+ id_meeting+';');
 
@@ -575,7 +575,9 @@ public class UserServiceImpl implements UserService {
                 Double noSqlVal = Double.valueOf(sqlVal.replace(',','.'));
                 String sqlNick = rs.getString("nick");
                 Integer sqlMeId = rs.getInt("id_meeting");
-                list.add(new ProductDto(sqlId,sqlName,noSqlVal,sqlNick,sqlMeId));
+                String sqlDate = rs.getString("date");
+                String sqlTime = rs.getString("time");
+                list.add(new ProductDto(sqlId,sqlName,noSqlVal,sqlNick,sqlDate,sqlTime,sqlMeId));
             }
             rs.close();
             stmt.close();
@@ -609,8 +611,8 @@ public class UserServiceImpl implements UserService {
 
             stmt = c.createStatement();
             stmt.executeUpdate(
-                    "INSERT INTO debt.products(id_product, name, price, id_person, id_meeting) VALUES("+ getFreeProductId() + ",'" + name + "'," + price +","
-                            + id_person +"," + id_meeting +");");
+                    "INSERT INTO debt.products(id_product, name, price, id_person, id_meeting, date, time) VALUES("+ getFreeProductId() + ",'" + name + "'," + price +","
+                            + id_person +"," + id_meeting +",'"+ currentDate.substring(0,10) +"','"+ currentDate.substring(11,19) +"');");
             stmt.close();
             c.commit();
             c.close();
