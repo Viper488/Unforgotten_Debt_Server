@@ -19,4 +19,5 @@ public interface UserService {
     boolean insertProduct(String name, Double price, Integer id_person, Integer id_meeting);
     boolean deleteProduct(Integer id_product);
     boolean addToMeeting(Integer id_meeting, String nick);
+    Double getSumPayments(Integer idTable, Integer idPerson, String which);
 }

@@ -510,7 +510,7 @@ public class UserServiceImpl implements UserService {
 
             stmt = c.createStatement();
             stmt.executeUpdate(
-                    "INSERT INTO debt.payment(id_payment, date, time,value,id_person,id_meeting) VALUES("+ getFreePaymentId() + ",'" + currentDate.substring(0,10) + "','" + currentDate.substring(11,19) + "'," + paymentDto.getValue() +","
+                    "INSERT INTO debt.payment(id_payment, date, time, value,id_person,id_meeting) VALUES("+ getFreePaymentId() + ",'" + currentDate.substring(0,10) + "','" + currentDate.substring(11,19) + "'," + paymentDto.getValue() +","
                             + paymentDto.getId_person() +"," + paymentDto.getId_meeting() +");");
             stmt.close();
             c.commit();
@@ -589,6 +589,48 @@ public class UserServiceImpl implements UserService {
         return  paymentListDto;
     }
 
+    @Override
+    public Double getSumPayments(Integer idTable, Integer idPerson, String which){
+        userRepository.initUsers();
+        userRepository.initMeetings();
+        String query;
+        if(which.equals("Person")){
+            query = "SELECT SUM(value) FROM debt.payment AS pa WHERE id_person = " + idPerson+";";
+        }
+        else{
+            query = "SELECT SUM(value) FROM debt.payment AS pa WHERE id_meeting = " + idTable+";";
+        }
+        Double sumPayments = 0.0;
+        Connection c = null;
+        Statement stmt  = null;
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://195.150.230.210:5434/2020_hamernik_artur",
+                            "2020_hamernik_artur", "31996");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully");
+
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while ( rs.next() ) {
+                String sqlVal = rs.getString("sum");
+                if(sqlVal == null){
+                    return sumPayments;
+                }
+                sqlVal = sqlVal.substring(0,sqlVal.length()-3);
+                sumPayments = Double.valueOf(sqlVal.replace(',','.'));
+            }
+            rs.close();
+            stmt.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Payments Sum downloaded successfully");
+        return  sumPayments;
+    }
     private String randomCode(){
         String numbers = "0123456789abcdefghijklmnoprstuvwxyz";
         char[] chars = numbers.toCharArray();

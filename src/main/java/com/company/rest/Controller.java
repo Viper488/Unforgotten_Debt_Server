@@ -107,6 +107,14 @@ public class Controller {
     public ResponseEntity getPaymentByPerson(@PathVariable Integer id_person){
         return ResponseEntity.ok(userService.getPayments(null,id_person,"Person"));
     }
+    @GetMapping(value = "/payments_sum_meeting/{id_meeting}")
+    public ResponseEntity getPaymentSumMeeting(@PathVariable Integer id_meeting){
+        return ResponseEntity.ok(userService.getSumPayments(id_meeting,null,"Meeting"));
+    }
+    @GetMapping(value = "/payments_sum_person/{id_person}")
+    public ResponseEntity getPaymentSumPerson(@PathVariable Integer id_person){
+        return ResponseEntity.ok(userService.getSumPayments(null,id_person,"Person"));
+    }
     @GetMapping(value = "/person_meetings")
     public ResponseEntity getPersonMeetings(@RequestParam Integer id_person){
         return ResponseEntity.ok(userService.getPersonMeetings(id_person));
