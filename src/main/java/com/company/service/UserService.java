@@ -18,4 +18,5 @@ public interface UserService {
     ProductListDto getProducts(Integer id_meeting);
     boolean insertProduct(String name, Double price, Integer id_person, Integer id_meeting);
     boolean deleteProduct(Integer id_product);
+    boolean addToMeeting(Integer id_meeting, String nick);
 }

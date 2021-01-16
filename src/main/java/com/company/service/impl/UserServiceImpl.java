@@ -149,8 +149,41 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    private boolean checkIfPerson(Integer id_meeting, Integer id_person){
+        Connection c = null;
+        Statement stmt  = null;
+        Integer meetId = null;
+        Integer perId = null;
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://195.150.230.210:5434/2020_hamernik_artur",
+                            "2020_hamernik_artur", "31996");
+            c.setAutoCommit(false);
+
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery( "SELECT id_meeting, id_person FROM debt.meeting_person WHERE id_meeting = "+ id_meeting + " AND id_person = " + id_person+";");
+            while ( rs.next() ) {
+                meetId = rs.getInt("id_meeting");
+                perId  = rs.getInt("id_person");
+            }
+            rs.close();
+            stmt.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        if(meetId == null){
+            return false;
+        }
+        if(meetId.equals(id_meeting) && perId.equals(id_person)){
+            return true;
+        }
+        return false;
+    }
     @Override
-    public boolean joinThruCode(String code,String password, String memberType){
+    public boolean joinThruCode(String code, String password, String memberType){
         userRepository.initUsers();
         userRepository.initMeetings();
 
@@ -167,6 +200,9 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         else if(!meetingDto.getPassword().equals(password)){
+            return false;
+        }
+        if(checkIfPerson(meetingDto.getId_meeting(), getLoggedUser().getId_person())){
             return false;
         }
         Connection c = null;
@@ -193,7 +229,61 @@ public class UserServiceImpl implements UserService {
         System.out.println("Insert person into meeting done successfully");
         return true;
     }
+    @Override
+    public boolean addToMeeting(Integer id_meeting, String nick){
+        userRepository.initUsers();
+        userRepository.initMeetings();
+        UserListDto users = userRepository.getUsers();
+        MeetingListDto meetingListDto = userRepository.getMeetings();
+        Integer id_added_person = null;
+        boolean flag = false;
+        //person exists check
+        for (UserDto user:users.getUsers()
+             ) {
+            if(user.getNick().equals(nick)){
+                id_added_person = user.getId_person();
+            }
+        }
+        if(id_added_person == null){
+            return false;
+        }
+        //meeting exists check
+        for (MeetingDto meeting:meetingListDto.getMeetingDtoList()
+             ) {
+            if(meeting.getId_meeting() == id_meeting){
+                flag  = true;
+            }
+        }
+        if(!flag){
+            return false;
+        }
+        if(checkIfPerson(id_meeting, id_added_person)){
+            return false;
+        }
+        Connection c = null;
+        Statement stmt  = null;
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://195.150.230.210:5434/2020_hamernik_artur",
+                            "2020_hamernik_artur", "31996");
+            c.setAutoCommit(false);
 
+            stmt = c.createStatement();
+            stmt.executeUpdate(
+                    "INSERT INTO debt.meeting_person VALUES("+ id_meeting +","+ id_added_person +",'member');");
+            stmt.close();
+            c.commit();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+            System.out.println("Insert person into meeting failed");
+            return false;
+        }
+        System.out.println("Insert person into meeting done successfully");
+        return true;
+    }
     private Integer getFreeId(){
         Connection c = null;
         Statement stmt  = null;

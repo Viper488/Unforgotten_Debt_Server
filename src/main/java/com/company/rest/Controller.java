@@ -138,6 +138,17 @@ public class Controller {
             return ResponseEntity.badRequest().body("Error occurred");
         }
     }
+    @PostMapping(value = "/add_person")
+    public ResponseEntity addToMeeting(@RequestParam Integer id_meeting, String nick){
+        if(userService.addToMeeting(id_meeting,nick)){
+            LOGGER.info("---- Person added successfully ----");
+            return ResponseEntity.ok().body("Person added successfully");
+        }
+        else{
+            LOGGER.info("---- Error occurred ----");
+            return ResponseEntity.badRequest().body("Error occurred");
+        }
+    }
 
 //    @CrossOrigin
 //    @PostMapping(value = "/registerUser")
