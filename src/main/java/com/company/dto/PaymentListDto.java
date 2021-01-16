@@ -12,11 +12,11 @@ public class PaymentListDto {
         this.paymentListDto = paymentDtoList;
     }
 
-    public List<PaymentGetDto> getPaymentDtoList() {
+    public List<PaymentGetDto> getPaymentListDto() {
         return paymentListDto;
     }
 
-    public void setPaymentDtoList(List<PaymentGetDto> paymentDtoList) {
-        this.paymentListDto = paymentDtoList;
+    public void setPaymentListDto(List<PaymentGetDto> paymentListDto) {
+        this.paymentListDto = paymentListDto;
     }
 }
