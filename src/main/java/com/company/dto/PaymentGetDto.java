@@ -4,7 +4,8 @@ import java.util.Calendar;
 
 public class PaymentGetDto {
     Integer id_payment;
-    Calendar date;
+    String date;
+    String time;
     Double value;
     Integer id_person;
     Integer id_meeting;
@@ -12,9 +13,10 @@ public class PaymentGetDto {
     public PaymentGetDto() {
     }
 
-    public PaymentGetDto(Integer id_payment, Calendar date, Double value, Integer id_person, Integer id_meeting) {
+    public PaymentGetDto(Integer id_payment, String date, String time, Double value, Integer id_person, Integer id_meeting) {
         this.id_payment = id_payment;
         this.date = date;
+        this.time = time;
         this.value = value;
         this.id_person = id_person;
         this.id_meeting = id_meeting;
@@ -28,12 +30,20 @@ public class PaymentGetDto {
         this.id_payment = id_payment;
     }
 
-    public Calendar getCalendar() {
+    public String getDate() {
         return date;
     }
 
-    public void setCalendar(Calendar date) {
+    public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public Double getValue() {

@@ -510,8 +510,8 @@ public class UserServiceImpl implements UserService {
 
             stmt = c.createStatement();
             stmt.executeUpdate(
-                    "INSERT INTO debt.payment(id_payment,date,value,id_person,id_meeting) VALUES("+ getFreePaymentId() + ",'" + currentDate + "'," + paymentDto.getValue() +","
-                            + userDto.getId_person() +"," + paymentDto.getId_meeting() +");");
+                    "INSERT INTO debt.payment(id_payment, date, time,value,id_person,id_meeting) VALUES("+ getFreePaymentId() + ",'" + currentDate.substring(0,10) + "','" + currentDate.substring(11,19) + "'," + paymentDto.getValue() +","
+                            + paymentDto.getId_person() +"," + paymentDto.getId_meeting() +");");
             stmt.close();
             c.commit();
             c.close();
@@ -569,12 +569,13 @@ public class UserServiceImpl implements UserService {
             while ( rs.next() ) {
                 Integer sqlId = rs.getInt("id_payment");
                 String sqlDate = rs.getString("date");
+                String sqlTime = rs.getString("time");
                 String sqlVal = rs.getString("value");
                 sqlVal = sqlVal.substring(0,sqlVal.length()-3);
                 Double noSqlVal = Double.valueOf(sqlVal.replace(',','.'));
                 Integer sqlIdPerson = rs.getInt("id_person");
                 Integer sqlIdMeeting = rs.getInt("id_meeting");
-                paymentGetDtos.add(new PaymentGetDto(sqlId,createCalendar(sqlDate),noSqlVal,sqlIdPerson,sqlIdMeeting));
+                paymentGetDtos.add(new PaymentGetDto(sqlId,sqlDate,sqlTime,noSqlVal,sqlIdPerson,sqlIdMeeting));
             }
             rs.close();
             stmt.close();
